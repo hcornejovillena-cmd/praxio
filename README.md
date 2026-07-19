@@ -24,7 +24,9 @@ Profesores universitarios que enseñan investigación cuantitativa de mercados y
 
 ## Uso
 
-Abrir directamente `kit_investigacion_mercados_v5.html` en un navegador (local o vía la demo en vivo). No requiere instalación, servidor ni build.
+Abrir directamente `kit_investigacion_mercados_v5.1.html` en un navegador (local o vía la demo en vivo). No requiere instalación, servidor ni build.
+
+`kit_investigacion_mercados_v5.html` (v5.0) se conserva en el repo como referencia histórica.
 
 ## Documentación del proyecto
 
@@ -38,4 +40,4 @@ MIT — ver [LICENSE](LICENSE). Se agradece atribución si lo adaptas para tu cu
 
 ---
 
-v5.0 · por Hugo Cornejo Villena
+v5.1 · por Hugo Cornejo Villena
