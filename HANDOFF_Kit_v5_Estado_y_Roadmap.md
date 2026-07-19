@@ -1,15 +1,23 @@
-# HANDOFF — Kit de Investigación de Mercados
-## Estado al cierre de conversación · Julio 2026
+# HANDOFF — Praxio (Kit de Investigación de Mercados)
+## Estado al cierre de conversación · 19 de julio de 2026
 
 ---
 
 ## 1. Descripción general del proyecto
 
-Plataforma educativa de investigación cuantitativa de mercados.
-Single-file HTML + Vanilla JS, sin backend, ejecutable desde GitHub Pages.
-Dos modos: **Modo Cálculo** (herramienta técnica libre) y **Modo Aprendizaje** (casos guiados pedagógicos).
+Plataforma educativa de investigación cuantitativa de mercados, rebrandeada como **Praxio**.
+Single-file HTML + Vanilla JS, sin backend, publicada en GitHub Pages.
+Dos modos: **Modo Cálculo** (herramienta técnica, ahora con entrada orientada a decisión de negocio — ver 4.6.C) y **Modo Aprendizaje** (casos guiados pedagógicos).
 
-**Archivo activo**: `kit_investigacion_mercados_v5.html` — 6.764 líneas
+**Archivo activo**: `kit_investigacion_mercados_v5.1.html` — 7.471 líneas
+**Archivo `kit_investigacion_mercados_v5.html` (v5.0)**: se conserva en el repo como referencia histórica, ya no es el activo.
+
+**Publicado en GitHub**:
+- Repo: https://github.com/hcornejovillena-cmd/praxio
+- Live (GitHub Pages): https://hcornejovillena-cmd.github.io/praxio/ → sirve `kit_investigacion_mercados_v5.1.html` vía redirect desde `index.html`
+- Releases: `v5.0` y `v5.1` (tags + GitHub Releases con notas)
+- Licencia: MIT (`LICENSE`)
+- `PRODUCT.md` en la raíz documenta register/usuarios/positioning/anti-referencias (generado vía `/impeccable init`)
 
 ---
 
@@ -172,6 +180,61 @@ donde `n_ij` = veces que ese encuestado vio/eligió ese ítem/nivel, `avgExpo_j`
 
 **Pendiente derivado de este trabajo**: `S.c.res.indivUtils` ya está calculado y disponible, pero el simulador de market share de CBC (Modo Cálculo) todavía asume mercado homogéneo (utilidades agregadas para todos). Construir un simulador heterogéneo (cada "encuestado sintético" vota con sus propias utilidades individuales) es el candidato natural para la siguiente sesión — ver sección 11.
 
+### 4.6 Sesión del 19 de julio de 2026 — v5.1, crítica de diseño, publicación
+
+Esta sesión partió de `kit_investigacion_mercados_v5.html` (v5.0, la misma base de la sección 4.5) y terminó con el proyecto publicado en GitHub como `kit_investigacion_mercados_v5.1.html`. Dos líneas de trabajo corrieron en paralelo y se fusionaron al final: (A) mejoras aplicadas directamente sobre v5.0 vía una crítica de diseño formal, y (B) trabajo hecho por separado (fuera de esta conversación) directamente sobre una copia que terminó siendo v5.1 — con el simulador heterogéneo de CBC que la sección 4.4 dejaba pendiente, entre otras cosas. Ver 4.6.D para cómo se reconciliaron ambas.
+
+**A. Hook de analítica de activación (GoatCounter)**
+
+Se agregó `function track(evt,data)` (justo después de `let _lang='es'`), que llama a `window.goatcounter.count(...)` si está disponible, no-op silencioso si no (ad-blocker, offline, o sin site code). Site code activo: `praxio.goatcounter.com`.
+
+Eventos instrumentados: `modulo_entrado` (en `swMod()`), `wizard_completado` (al final de `analyzeC/M/VW/NMS` y `runTURF`, con `modo:'calculo'|'aprendizaje'` derivado de `S.edu.active` para no mezclar las estadísticas de ambos modos), `export_realizado` (en los 7 `exp*()`), `caso_iniciado` y `caso_completado` (Modo Aprendizaje).
+
+**Motivación**: antes de esta sesión no había ninguna forma de saber qué módulos se usan realmente ni dónde abandonan los usuarios — cualquier decisión de qué mejorar era una corazonada. Con esto ya se puede calcular el Swiss Knife Index real de los 5 módulos.
+
+**B. Crítica de diseño formal (`/impeccable critique`) y fixes aplicados**
+
+Se corrió el flujo de crítica de impeccable con dos evaluaciones aisladas (revisión de diseño + escaneo determinístico `detect.mjs`), sin navegador disponible en este entorno (limitación declarada explícitamente en el reporte). Score: **29/40 (Good)**. Snapshot guardado en `.impeccable/critique/`.
+
+Hallazgos corregidos:
+- **[P0] Pérdida silenciosa de datos en Modo Aprendizaje**: `startEduCase()` reescribía `S.edu.pretest/postest/response` sin confirmación al re-iniciar un caso con progreso ya hecho, a diferencia de `resetMod()` en Modo Cálculo que sí pasa por `confirmModal()`. Fix: nueva guarda `hasProgress` + `confirmModal()`, lógica de inicialización movida a `_doStartEduCase(cs)`.
+- **[P1] Selector de técnica de Modo Cálculo sin guía**: se agregaron `title` + nuevo atributo `data-i18n-title` (mismo patrón que `data-i18n-ph`, manejado en `applyI18n()`) a los 5 botones de `#mbar-calc`, con una descripción de una línea de cuándo usar cada técnica. Ver también 4.6.C — luego se amplió a un rediseño mayor del punto de entrada.
+- **[P1] Badge "✦ IA" vs. fallback**: investigado y descartado como falso positivo — `showAI()` ya distingue correctamente "✦ GPT" (verde) de "⚙ AUTO" (gris, con tooltip explicativo) en el resultado renderizado; el hallazgo solo había visto el badge genérico del header de la tarjeta.
+- **[P2] 11 bordes laterales de color (`border-left`)**: prohibición explícita de la sección "Absolute bans" del propio skill de impeccable. Reemplazados por borde completo o tinte de fondo según el caso (`.turf-portfolio-highlight`, `.shapley-insight`, `.edu-brief`, `.diag-ok/warn/crit`, `.layer-interp-item`, las 2 tarjetas de distinción TURF/MaxDiff en Modo Aprendizaje, la tarjeta de utilidades por atributo en CBC, `.resp-block`).
+- **[P2] Armador de atributos CBC sin colapsar**: `renderCA()` ahora colapsa un atributo a una fila resumen ("Nombre (N niveles)") cuando está completo (nombre + todos los niveles no vacíos), con botón "✎ Editar" para reabrir. Nueva función `toggleCAttrCollapse(ai)`, nuevo campo `a.collapsed` por atributo.
+
+No corregidos por diseño (quedan documentados, no bloqueantes): exportación agregada vs. individual con estilo `.btn` idéntico (fácil clic equivocado); naming leftover `_geminiKey`/`id="gemini-key"` de una integración anterior con Gemini (la integración real ya usa OpenAI); 6 usos de `transition:width` (jank potencial, debería animarse por `transform`); ~30 em-dashes en el copy; tarjetas de selección única (`.meth-card`) usan `role="button"` en vez de `role="radio"`/`aria-selected`, así que un lector de pantalla no anuncia el cambio de selección; badge rojo "↓ Retrocedió" en el postest presenta un delta estadísticamente ruidoso (quiz de solo 3 preguntas) con demasiada contundencia visual.
+
+**C. Fixes adicionales por feedback directo sobre la app ya publicada**
+
+Tres correcciones más, pedidas después de revisar la v5.1 ya en vivo:
+
+1. **Versión desincronizada**: el header mostraba "v5.0" aunque el archivo activo ya era v5.1 (mismo texto hardcodeado en 5 lugares: header, título y footer del reporte descargable, y ambos headers de script R). Se introdujo `const APP_VERSION='5.1'` (junto a `_lang`) y los 4 lugares en JS ahora interpolan `${APP_VERSION}`; el header estático (único lugar en HTML plano) se corrigió a mano. **Esto no debería volver a pasar en los 4 de 5 lugares que ahora dependen de la constante — solo el header HTML plano requiere corrección manual en el próximo bump de versión.**
+2. **Reposicionamiento de Modo Cálculo** (el cambio más grande de la sesión): el feedback fue "ahora parece un conjunto de técnicas. Debes presentarlo como una herramienta para pasar de una decisión de marketing a un diseño, análisis e interpretación." Se agregó un nuevo bloque `#calc-decision-wrap` **antes** de la barra de pestañas técnicas (`#mbar-calc`), reutilizando las mismas 4 categorías de `EDU_PROBLEMS` (precio/atributos/diseno/portafolio) que ya usa el Paso 0 de Modo Aprendizaje — mismo copy, misma fuente de verdad, cero duplicación de contenido. Nuevo mapeo `CALC_DECISION_ENGINES` (`precio` → `['vw','nms']` con sub-elección; `atributos`→`['maxdiff']`; `diseno`→`['conjoint']`; `portafolio`→`['turf']`), nueva función `renderCalcDecisions()` (llamada en el bootstrap `window.addEventListener('load',...)` y de nuevo dentro de `applyI18n()` para que el picker cambie de idioma), y `goToCalcModule(engine)` que dispara `.click()` sobre el botón de pestaña real (preserva el `cls` de color de cada `swMod(...)`). La barra de pestañas técnicas sigue disponible debajo, sin quitarla, para quien ya sepa qué técnica necesita.
+3. **API key demasiado protagonista**: la barra de API key era una franja oscura de ancho completo, siempre visible al entrar a Modo Cálculo, aunque es una función opcional (el análisis automático por reglas funciona sin ella). Rediseñada: el wrapper externo pasó de `.api-bar` (oscuro, full-width) a `.api-bar-mini` (chico, mismo tono que el fondo), con un solo botón de texto discreto como toggle (reemplaza al checkbox `#api-toggle-cb`, que se eliminó). Copy también ablandado tras una segunda ronda de feedback: de "⚙ IA avanzada (opcional): usar tu propia API key de OpenAI" a **"✦ Activar conclusiones asistidas por IA (opcional)"** — la mecánica de la API key queda explicada solo dentro del panel ya expandido, no en la etiqueta colapsada.
+
+**D. Reconciliación v5.0 (esta conversación) vs. v5.1 (trabajo externo) — importante para la próxima sesión**
+
+A mitad de sesión se descubrió que existía una `kit_investigacion_mercados_v5.1.html` con trabajo hecho por fuera de esta conversación, más avanzada que la v5.0 sobre la que se venían aplicando los fixes de 4.6.A/B. Se hizo un diff completo (34 hunks, revisados uno por uno, no solo los más grandes) y se confirmó que v5.1 incluía, además de lo ya conocido:
+
+- **El simulador heterogéneo de CBC que la sección 11 (edición anterior) marcaba como "Prioridad inmediata #1"** — ya implementado en v5.1, ver 4.6.E. Esto salda el pendiente de la sección 4.4/D10.
+- Gráfico de utilidades parciales de CBC convertido a barras divergentes centradas en cero (antes rango min→max sin signo).
+- Curva de elasticidad de CBC reemplazada por un gráfico de línea real en Canvas (`drawElastChart()`), con detección de inversiones de monotonía.
+- Plantilla de Excel para TURF (`dlTURFTpl()`, binaria/umbral), más una sección pedagógica nueva "¿Cómo se pregunta esto en la encuesta?" con contraste correcto/incorrecto.
+- Fix de escalado de barras aplicado de forma consistente en CBC (importancia), MaxDiff (net scores) y TURF (Shapley): de "escalar a 100 literal" a "escalar al máximo real", quitando en los tres casos la fila "Total: 100%" redundante.
+- **`applyI18n()` ahora re-renderiza paneles dinámicos de CBC/MaxDiff al cambiar de idioma** (`if(S.c.res){renderCRes();...} if(S.m.res){renderMRes();}`) — esto **revierte la Decisión D2** (ver sección 8, actualizada).
+
+Todos los fixes de 4.6.A/B/C se replicaron manualmente sobre v5.1 (mismos `old_string`/`new_string` cuando el ancla no había cambiado; verificados anclaje por anclaje antes de cada edición, no asumidos). Sintaxis validada con `node --check` después de cada ronda. `kit_investigacion_mercados_v5.html` (v5.0) quedó en el repo tal cual, sin los fixes de 4.6, como referencia histórica — **no seguir editando v5.0**, toda la app viva es v5.1.
+
+**E. Simulador heterogéneo de CBC (detalle técnico, trabajo externo integrado en v5.1)**
+
+Tres reglas de simulación seleccionables vía nuevas pills `#sim-rule-pills` (nuevo campo `S.c.simRule`, default `'sop'`):
+- `sop` (Preferencia compartida, **recomendado**): cada encuestado usa sus propias utilidades individuales (`S.c.res.indivUtils`, ya suavizadas con Empirical Bayes de la sección 4.5.C) para calcular su probabilidad logit personal de elegir cada producto; el share final es el promedio de esas probabilidades. Función `calcShareHet(profiles,'fc'|'sop')`.
+- `fc` (Primera elección / voto): cada encuestado "vota" por su producto de mayor utilidad (o "Ninguno"); share = % de votos.
+- `agg` (Agregado, clásico): el comportamiento original pre-heterogéneo, con `calcShareAgg(profiles)`. Se conserva como referencia histórica y comparativa.
+
+`calcShare(profiles)` es ahora un dispatcher: `agg` → `calcShareAgg`; cualquier otra regla → `calcShareHet`. `setSimRule(rule,el)` actualiza `S.c.simRule`, la nota metodológica visible, y recalcula (`updateSim()`, `renderElast()`).
+
 ---
 
 ## 5. Estado de la i18n del Modo Cálculo
@@ -193,6 +256,37 @@ donde `n_ij` = veces que ese encuestado vio/eligió ese ítem/nivel, `avgExpo_j`
 ---
 
 ## 6. Arquitectura técnica clave
+
+### Constante de versión (nueva, sesión 4.6.C)
+
+```javascript
+let _lang='es';
+const APP_VERSION='5.1';
+```
+
+Usada vía `${APP_VERSION}` en 4 de los 5 lugares donde se muestra el número de versión (header del reporte descargable, footer del reporte, y ambos headers de script R exportable). El header estático del logo en el HTML sigue siendo texto plano — es el único de los 5 que requiere corrección manual en el próximo bump de versión.
+
+### Analítica de activación (nueva, sesión 4.6.A)
+
+```javascript
+function track(evt,data){
+  if(!window.goatcounter||!window.goatcounter.count)return;
+  const parts=Object.entries(data||{}).filter(([,v])=>v!==''&&v!=null).map(([k,v])=>`${k}=${v}`);
+  window.goatcounter.count({path:'evt/'+evt+(parts.length?'/'+parts.join('&'):''),title:evt,event:true});
+}
+```
+
+No-op silencioso si GoatCounter no cargó. Site code activo: `praxio.goatcounter.com`. Eventos: `modulo_entrado`, `wizard_completado`, `export_realizado`, `caso_iniciado`, `caso_completado` — ver 4.6.A para el detalle de dónde se dispara cada uno.
+
+### Decisión de negocio → técnica (nueva, sesión 4.6.C)
+
+```javascript
+const CALC_DECISION_ENGINES={precio:['vw','nms'],atributos:['maxdiff'],diseno:['conjoint'],portafolio:['turf']};
+function renderCalcDecisions(){ /* reusa EDU_PROBLEMS[x].title/.cardDesc */ }
+function goToCalcModule(engine){ document.getElementById('tab-'+engine)?.click(); /* ... */ }
+```
+
+Reutiliza `EDU_PROBLEMS` (la misma fuente de datos del Paso 0 de Modo Aprendizaje) para presentar Modo Cálculo como decisión de negocio primero, técnica después. Si se agrega una categoría nueva a `EDU_PROBLEMS`, agregar también su entrada en `CALC_DECISION_ENGINES` para que aparezca en el picker de Modo Cálculo.
 
 ### DICT de traducciones
 
@@ -221,8 +315,8 @@ function applyI18n() {
 
 ```javascript
 const S = {
-  c:   { attrs, vers, design, data, res, priceAttr, simN },  // CBC Conjoint — res.indivUtils: utilidades individuales suavizadas (nuevo)
-  m:   { items, vers, design, data, res },                    // MaxDiff — res.indivScores: net/norm ya suavizados con Empirical Bayes (nuevo)
+  c:   { attrs, vers, design, data, res, priceAttr, simN, simRule },  // CBC Conjoint — res.indivUtils: utilidades individuales suavizadas; simRule: 'sop'|'fc'|'agg' (nuevo, v5.1 — simulador heterogéneo, ver 4.6.E)
+  m:   { items, vers, design, data, res },                    // MaxDiff — res.indivScores: net/norm ya suavizados con Empirical Bayes
   vw:  { data, res },                                         // Van Westendorp
   nms: { data, res },                                         // NMS
   turf:{ items, data, res },                                  // TURF
@@ -314,16 +408,21 @@ No revertir sin discusión explícita.
 | # | Decisión | Detalle |
 |---|----------|---------|
 | D1 | RNG con seed fija | Todos los `genData()` usan seeds fijos para reproducibilidad |
-| D2 | Sin re-render automático al cambiar idioma | Los resultados ya renderizados permanecen hasta el próximo análisis |
+| D2 | ~~Sin re-render automático al cambiar idioma~~ **REVERTIDA en v5.1** | Ahora `applyI18n()` sí re-renderiza CBC/MaxDiff (y el picker de decisión de Modo Cálculo) si ya hay resultados calculados — ver 4.6.D. Motivo del cambio no documentado por esta conversación (trabajo externo integrado); si se revierte de nuevo, hacerlo con discusión explícita, igual que cualquier otra decisión de esta tabla |
 | D3 | Exclusión del scope i18n | Script R (comentarios en ES), nombres de hojas Excel internas, genXAI en ES salvo solicitud |
 | D4 | Simulador CBC en Modo Aprendizaje | Escenarios pre-configurados, no simulador interactivo |
 | D5 | "Salud Directa" bilingüe | Nombre de empresa igual en ES y EN |
 | D6 | 2 productos por defecto en simulador | El simulador CBC del Modo Cálculo inicia con 2 productos |
 | D7 | Gumbel noise scale=1.0 | Para `loadCDemo()` y `genData()` de casos pedagógicos CBC |
-| D8 | Estrategia i18n mixta | HTML estático → `data-i18n`; JS dinámico → ternarios `_lang==='es'?...:...` |
+| D8 | Estrategia i18n mixta | HTML estático → `data-i18n`; JS dinámico → ternarios `_lang==='es'?...:...`. Extendida en 4.6.B con `data-i18n-title` (mismo patrón que `data-i18n-ph`, para atributos `title`) |
 | D9 | Bayesian smoothing: Empirical Bayes cerrado, no MCMC completo | HB-MNL con Metropolis-Hastings evaluado y descartado por costo de complejidad/mantenimiento; se implementó el espíritu del paper de Orme (2026) con fórmula cerrada precision-weighted |
-| D10 | Simulador de market share CBC sigue homogéneo por ahora | `S.c.res.indivUtils` ya existe y está calculado, pero el simulador (Modo Cálculo) no lo usa todavía — heterogeneidad real es trabajo futuro explícitamente diferido |
+| D10 | ~~Simulador de market share CBC sigue homogéneo~~ **RESUELTA en v5.1** | Simulador heterogéneo implementado con 3 reglas seleccionables (`sop`/`fc`/`agg`) — ver 4.6.E. Ya no es trabajo pendiente |
 | D11 | Nunca nombrar una variable local `t` en funciones a traducir | Colisión con la función global `t()` de i18n; encontrado y corregido en `renderMC()` y `renderCC()` |
+| D12 | Analítica sin cookies ni PII (GoatCounter) | Se eligió sobre Plausible/Umami/GA por ser gratis para uso no comercial y no requerir servidor propio (Umami) ni costo recurrente (Plausible) — ver 4.6.A |
+| D13 | Modo Aprendizaje debe confirmar antes de perder progreso, igual que Modo Cálculo | `startEduCase()` ahora pasa por `confirmModal()` si hay progreso real (`hasProgress`); antes solo `resetMod()` (Modo Cálculo) tenía esta guarda — asimetría corregida en 4.6.B |
+| D14 | Modo Cálculo se presenta como decisión de negocio primero, técnica después | Nuevo picker `#calc-decision-wrap` reutiliza `EDU_PROBLEMS`; la barra de pestañas técnicas (`#mbar-calc`) se conserva debajo, no se elimina — ver 4.6.C |
+| D15 | La API key de OpenAI es una función avanzada opcional, nunca protagonista | Colapsada por defecto detrás de un toggle discreto (`.api-bar-mini`); copy explícitamente no-técnico ("Activar conclusiones asistidas por IA") — ver 4.6.C |
+| D16 | Número de versión desde una única constante (`APP_VERSION`) | Evita que la versión mostrada se desincronice entre header/reporte/scripts R como pasó entre v5.0 y v5.1 — ver 4.6.C |
 
 ---
 
@@ -392,21 +491,42 @@ function renderEduDiag() {
 
 | Archivo | Descripción | Prioridad para nueva conversación |
 |---------|-------------|----------------------------------|
-| `CONTEXTO_Kit_Investigacion_Mercados.md` | System context y principios del proyecto | Alta — subir como instrucciones del proyecto |
 | `HANDOFF_Kit_v5_Estado_y_Roadmap.md` | Este documento | Alta — subir al proyecto |
-| `kit_investigacion_mercados_v5.html` | Código fuente completo (6.764 líneas) | Alta — subir al proyecto |
+| `kit_investigacion_mercados_v5.1.html` | **Archivo activo.** Código fuente completo (7.471 líneas) | Alta — subir al proyecto |
+| `kit_investigacion_mercados_v5.html` | v5.0 — referencia histórica, no editar más | Baja |
+| `PRODUCT.md` | Register, usuarios, positioning, anti-referencias, principios de diseño (generado vía `/impeccable init`) | Alta — da contexto estratégico que este HANDOFF no cubre |
+| `README.md` | Descripción pública del repo + link a la demo en vivo | Media |
+| `LICENSE` | MIT | Baja |
+| `CAMBIOS.md` | Registro de cambios (rebranding a Praxio, accesibilidad WCAG AA) | Media |
+| `index.html` | Redirect a `kit_investigacion_mercados_v5.1.html`, para que la raíz de GitHub Pages funcione | Baja |
+| `.impeccable/critique/*.md` | Snapshot de la crítica de diseño de esta sesión (score 29/40) | Media — backlog para la próxima pasada de polish |
+| `.gitignore` | Excluye artefactos de R (`.RData`, `.Rhistory`), `.claude/`, `.impeccable/`, y el prototipo R/Shiny superado (`Ejecutable.R`, `R/analysis.R`, `.Rproj`) | — |
+
+**Nota**: `CONTEXTO_Kit_Investigacion_Mercados.md` (mencionado en versiones anteriores de este HANDOFF) no existe en la carpeta del proyecto — puede haberse perdido o nunca haberse creado. Si hace falta ese contexto, `PRODUCT.md` cubre ahora una función equivalente (más formal, generada por impeccable).
+
+**Prototipo R/Shiny descartado**: el proyecto tenía `Ejecutable.R`, `R/analysis.R` y un `.Rproj` de un prototipo Shiny anterior, ya roto (`Ejecutable.R` dependía de un `app.R` que ya no existe en la carpeta). Se sacaron del repo público esta sesión (siguen localmente, ver `.gitignore`) — no es trabajo pendiente, es historia descartada.
 
 ---
 
 ## 11. Recomendaciones para la nueva conversación
 
+### Antes que nada: confirmar que no hay una v5.2 dando vueltas
+
+Esta sesión perdió tiempo real reconciliando v5.0 (sobre la que se venía trabajando) contra una v5.1 aparecida a mitad de camino con trabajo hecho por fuera de la conversación (ver 4.6.D). **Primer paso de la próxima sesión**: preguntar directamente si existe una versión más nueva en la carpeta antes de asumir que `kit_investigacion_mercados_v5.1.html` sigue siendo la última palabra.
+
 ### Prioridad inmediata
 
-La i18n del Modo Cálculo está **completa** (los 5 módulos). Las tres líneas de trabajo abiertas al cierre de esta conversación, en orden sugerido:
+La i18n del Modo Cálculo sigue **completa** (los 5 módulos). El simulador heterogéneo de CBC (antes prioridad #1) **ya está resuelto** en v5.1 — ver 4.6.E. Líneas de trabajo abiertas, en orden sugerido:
 
-1. **Simulador de market share heterogéneo en CBC (Modo Cálculo)** — `S.c.res.indivUtils` ya existe (utilidades individuales suavizadas con Empirical Bayes). Falta rediseñar `initSim()`/`updateSim()` para que cada "encuestado sintético" vote con sus propias utilidades en vez de usar las agregadas para todo el mercado. Es la continuación natural del trabajo de shrinkage de esta sesión.
-2. **Mapa de Posicionamiento (Análisis de Correspondencias)** — ver 7.1, sigue siendo el módulo nuevo de mayor prioridad.
-3. **Aplicar Empirical Bayes shrinkage también al script R exportable** (`buildMScript`, `buildCScript`) — hoy los scripts R usan `mlogit`/conteo simple sin ningún smoothing; sería consistente ofrecer también ahí una versión con `bayesm` o `ChoiceModelR` (HB real) como alternativa avanzada, ya que el usuario de R típicamente tiene más tiempo de cómputo disponible que el navegador.
+1. **Mapa de Posicionamiento (Análisis de Correspondencias)** — ver 7.1, sigue siendo el módulo nuevo de mayor prioridad; nada de esta sesión lo tocó.
+2. **Aplicar Empirical Bayes shrinkage también al script R exportable** (`buildMScript`, `buildCScript`) — hoy los scripts R usan `mlogit`/conteo simple sin ningún smoothing; sería consistente ofrecer también ahí una versión con `bayesm` o `ChoiceModelR` (HB real) como alternativa avanzada.
+3. **Minor observations de la crítica de diseño (4.6.B) todavía sin resolver**, de mayor a menor impacto:
+   - `role="radio"`/`aria-selected` en `.meth-card` (problema/caso en Modo Aprendizaje) — hoy usa `role="button"` genérico vía el retrofit de accesibilidad, y un lector de pantalla no anuncia el cambio de selección entre tarjetas.
+   - Ablandar el badge rojo "↓ Retrocedió" del postest — un delta de 1 punto sobre un quiz de 3 preguntas es estadísticamente ruidoso pero se presenta con la misma contundencia visual que un resultado concluyente.
+   - Distinguir visualmente los botones de exportación agregada vs. individual (mismo estilo `.btn` hoy, fácil clic equivocado).
+   - Limpiar el naming leftover `_geminiKey`/`id="gemini-key"` (la integración real ya es OpenAI, no Gemini).
+   - Los 6 `transition:width` (CBC/VW/NMS bar fills) deberían migrar a `transform` para evitar jank.
+4. **Configurar un servidor MCP de navegador** (Playwright/Puppeteer/chrome-devtools) si se quiere una crítica de diseño con evidencia visual real — esta sesión y la anterior corrieron ambas con la limitación declarada de "sin navegador disponible", basadas en lectura de código fuente únicamente.
 
 ### Módulo más valioso para agregar primero (nuevo módulo, no mejora de existente)
 
