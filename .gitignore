@@ -10,3 +10,8 @@ AI-assisted Learning Environment for Applied Market Research/
 # Local tooling (not part of the published project)
 .claude/
 .impeccable/
+
+# Superseded R/Shiny prototype (app.R no longer exists; kept locally only)
+Ejecutable.R
+R/analysis.R
+Kit_InvestigacionMercados.Rproj
