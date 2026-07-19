@@ -475,7 +475,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--r);}
   <button class="api-mini-toggle" onclick="toggleApiBar()" id="api-mini-btn" aria-expanded="false" aria-controls="api-bar-fields" data-i18n="api.advanced.toggle">✦ Activar conclusiones asistidas por IA (opcional) ▾</button>
   <div id="api-bar-fields" class="api-bar hid">
     <span class="api-label">🤖 <span data-i18n="api.label">IA · OPENAI</span></span>
-    <input class="api-input" type="password" id="gemini-key" oninput="onKeyInput()">
+    <input class="api-input" type="password" id="openai-key" oninput="onKeyInput()">
     <button class="api-save" onclick="saveKey()" data-i18n="api.save">✓ Guardar key (solo esta sesión)</button>
     <button class="api-save" onclick="testKey()" style="background:#14302a;border-color:#1a7a4a;color:#4ade80;" data-i18n="api.test">⚡ Probar conexión</button>
     <span class="api-status api-empty" id="api-status-badge" data-i18n="api.empty">Sin key — se usará análisis automático</span>
@@ -621,7 +621,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--r);}
     <pre id="csp" style="display:none"></pre>
     <div class="card"><h3 class="ct" data-i18n="calc.export.title">Exportar resultados</h3>
       <div class="nt nti"><span class="ni">📖</span><span data-i18n="calc.cbc.smoothing.note">Las utilidades individuales de este archivo están suavizadas con Empirical Bayes (shrinkage): encuestados que vieron poco un nivel se ajustan hacia la utilidad poblacional; con más exposición, se confía más en su propio dato. Ver hoja "Utilidades sin suavizar" para los valores originales.</span></div>
-      <div class="bgrp"><button class="btn bs2" onclick="gCS(3)" data-i18n="calc.btn.prev">← Paso anterior</button><button class="btn bp" onclick="expC()" data-i18n="calc.btn.excel">↓ Excel resultados</button><button class="btn bg" onclick="expCInd()" data-i18n="calc.cbc.btn.exportind">↓ Utilidades individuales</button><button class="btn bg" onclick="resetMod('conjoint')" data-i18n="calc.btn.reset">↺ Nuevo análisis</button></div></div>
+      <div class="bgrp"><button class="btn bs2" onclick="gCS(3)" data-i18n="calc.btn.prev">← Paso anterior</button><button class="btn bp" onclick="expC()" data-i18n="calc.btn.excel">↓ Excel resultados</button><button class="btn bg" onclick="expCInd()" data-i18n="calc.cbc.btn.exportind">👤 Utilidades individuales</button><button class="btn bg" onclick="resetMod('conjoint')" data-i18n="calc.btn.reset">↺ Nuevo análisis</button></div></div>
   </div>
 </div>
 </div>
@@ -691,7 +691,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--r);}
     <pre id="msp" style="display:none"></pre>
     <div class="card"><h3 class="ct" data-i18n="calc.export.title">Exportar resultados</h3><p class="cs" data-i18n="calc.md.export.desc">Incluye ranking agregado y matriz individual por encuestado.</p>
       <div class="nt nti"><span class="ni">📖</span><span data-i18n="calc.md.smoothing.note">Los puntajes individuales de este archivo están suavizados con Empirical Bayes (shrinkage): encuestados con pocas exposiciones a un ítem se ajustan hacia la media poblacional; con más exposiciones, se confía más en su propio dato. Ver hoja "Netos sin suavizar" para los valores originales.</span></div>
-      <div class="bgrp"><button class="btn bs2" onclick="gMS(3)" data-i18n="calc.btn.prev">← Paso anterior</button><button class="btn bpb" onclick="expM()" data-i18n="calc.md.btn.exportagg">↓ Excel agregado</button><button class="btn bgb" onclick="expMInd()" data-i18n="calc.md.btn.exportind">↓ Matriz individual</button><button class="btn bgb" onclick="resetMod('maxdiff')" data-i18n="calc.btn.reset">↺ Nuevo análisis</button></div>
+      <div class="bgrp"><button class="btn bs2" onclick="gMS(3)" data-i18n="calc.btn.prev">← Paso anterior</button><button class="btn bpb" onclick="expM()" data-i18n="calc.md.btn.exportagg">↓ Excel agregado</button><button class="btn bgb" onclick="expMInd()" data-i18n="calc.md.btn.exportind">👤 Matriz individual</button><button class="btn bgb" onclick="resetMod('maxdiff')" data-i18n="calc.btn.reset">↺ Nuevo análisis</button></div>
     </div>
   </div>
 </div>
@@ -1185,7 +1185,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--r);}
     <div class="card">
       <h3 class="ct" data-i18n="edu.problems.select.title">¿Qué tipo de problema de negocio quieres resolver?</h3>
       <p class="cs" data-i18n="edu.problems.select.desc">Cada problema empresarial requiere un tipo distinto de información — y por lo tanto, una técnica de investigación distinta. Elige el que más se acerque a tu situación.</p>
-      <div id="edu-problem-list"></div>
+      <div id="edu-problem-list" role="radiogroup" aria-label="Categoría de problema de negocio"></div>
     </div>
   </div>
 
@@ -1195,7 +1195,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--r);}
     <div class="card">
       <h3 class="ct" data-i18n="edu.case.select.title">Selecciona un caso de estudio</h3>
       <p class="cs" data-i18n="edu.case.select.desc">Cada caso incluye datos de encuesta, contexto de negocio y una decisión de marketing que deberás resolver.</p>
-      <div id="edu-case-list"></div>
+      <div id="edu-case-list" role="radiogroup" aria-label="Caso de estudio"></div>
       <div class="bgrp" style="margin-top:1.25rem">
         <button class="btn bs2" onclick="gEdu(0)">← <span data-i18n="nav.prev">Paso anterior</span></button>
         <button class="btn bpedu" id="edu-case-start-btn" onclick="startEduCase()"><span data-i18n="edu.case.start">Comenzar caso</span> →</button>
@@ -1650,7 +1650,7 @@ es:{
   'calc.md.script.label':'Script R — MaxDiff',
   'calc.script.copy':'⎘ Copiar script','calc.script.copied':'✓ Copiado','calc.script.dl':'↓ Descargar .R',
   'calc.md.export.desc':'Incluye ranking agregado y matriz individual por encuestado.',
-  'calc.md.btn.exportagg':'↓ Excel agregado','calc.md.btn.exportind':'↓ Matriz individual',
+  'calc.md.btn.exportagg':'↓ Excel agregado','calc.md.btn.exportind':'👤 Matriz individual',
   'calc.md.err.max30':'Máximo 30.','calc.md.err.min5':'Mínimo 5.','calc.md.err.emptyitem':'Falta texto en ítem.','calc.md.itemword':'Ítem',
   'calc.md.skip.note':'¿Ya generaste este cuestionario antes y volvés con los datos de campo? Si conservás el Excel descargado en el Paso 2 (incluye el diseño), no hace falta reescribir los ítems.',
   'calc.md.btn.skipdesign':'Ya tengo mi diseño y mis datos →',
@@ -1743,7 +1743,7 @@ es:{
   'calc.cbc.exp.sheet.indutil':'Utilidades individuales','calc.cbc.exp.sheet.indrawutil':'Utilidades sin suavizar',
   'calc.cbc.exp.sheet.indexpo':'Exposiciones por nivel',
   'calc.cbc.smoothing.note':'Las utilidades individuales de este archivo están suavizadas con Empirical Bayes (shrinkage): encuestados que vieron poco un nivel se ajustan hacia la utilidad poblacional; con más exposición, se confía más en su propio dato. Ver hoja "Utilidades sin suavizar" para los valores originales.',
-  'calc.cbc.btn.exportind':'↓ Utilidades individuales',
+  'calc.cbc.btn.exportind':'👤 Utilidades individuales',
   // ── TURF Analysis ────────────────────────────────────────────────────────────────────────────────
   'calc.turf.wiz.1':'Datos','calc.turf.wiz.2':'Configurar','calc.turf.wiz.3':'Resultados',
   'calc.turf.what.title':'¿Qué es TURF Analysis?',
@@ -2073,7 +2073,7 @@ en:{
   'calc.md.script.label':'R Script — MaxDiff',
   'calc.script.copy':'⎘ Copy script','calc.script.copied':'✓ Copied','calc.script.dl':'↓ Download .R',
   'calc.md.export.desc':'Includes aggregated ranking and individual matrix per respondent.',
-  'calc.md.btn.exportagg':'↓ Aggregated Excel','calc.md.btn.exportind':'↓ Individual matrix',
+  'calc.md.btn.exportagg':'↓ Aggregated Excel','calc.md.btn.exportind':'👤 Individual matrix',
   'calc.md.err.max30':'Maximum 30.','calc.md.err.min5':'Minimum 5.','calc.md.err.emptyitem':'Missing text in item.','calc.md.itemword':'Item',
   'calc.md.skip.note':'Did you already generate this questionnaire before and are now returning with field data? If you kept the Excel file downloaded in Step 2 (it includes the design), there\'s no need to retype the items.',
   'calc.md.btn.skipdesign':'I already have my design and data →',
@@ -2166,7 +2166,7 @@ en:{
   'calc.cbc.exp.sheet.indutil':'Individual utilities','calc.cbc.exp.sheet.indrawutil':'Unsmoothed utilities',
   'calc.cbc.exp.sheet.indexpo':'Exposures per level',
   'calc.cbc.smoothing.note':'The individual utilities in this file are smoothed using Empirical Bayes (shrinkage): respondents who saw a level less often are pulled toward the population utility; with more exposure, their own data is trusted more. See the "Unsmoothed utilities" sheet for the original values.',
-  'calc.cbc.btn.exportind':'↓ Individual utilities',
+  'calc.cbc.btn.exportind':'👤 Individual utilities',
   // ── TURF Analysis ────────────────────────────────────────────────────────────────────────────────
   'calc.turf.wiz.1':'Data','calc.turf.wiz.2':'Configure','calc.turf.wiz.3':'Results',
   'calc.turf.what.title':'What is TURF Analysis?',
@@ -2965,7 +2965,7 @@ function renderProblemList(){
   if(!list)return;
   list.innerHTML=Object.values(EDU_PROBLEMS).map(p=>{
     const locked=!p.active;
-    return `<div class="meth-card${locked?'':' problem-active'}" style="${locked?'opacity:.5;cursor:default;':''}" ${locked?'':`onclick="selectEduProblem('${p.id}')"`}>
+    return `<div class="meth-card${locked?'':' problem-active'}" style="${locked?'opacity:.5;cursor:default;':''}" ${locked?'':`onclick="selectEduProblem('${p.id}')" role="radio" aria-checked="${p.id===S.edu.problemId?'true':'false'}"`}>
       <div class="meth-card-icon">${locked?'🔒':p.icon}</div>
       <div>
         <div class="meth-card-title">${locked?(_lang==='es'?'Próximamente — ':'Coming soon — '):''}${p.title[_lang]||p.title.es}</div>
@@ -3036,7 +3036,7 @@ function renderEduCaseList(){
     return;
   }
   container.innerHTML=matching.map((c,i)=>`
-    <div class="meth-card${i===0?' selected':''}" id="case-card-${c.id}" onclick="selectEduCase('${c.id}')">
+    <div class="meth-card${i===0?' selected':''}" id="case-card-${c.id}" onclick="selectEduCase('${c.id}')" role="radio" aria-checked="${i===0?'true':'false'}">
       <div class="meth-card-icon">${c.id==='cafe_nms'?'📈':'☕'}</div>
       <div>
         <div class="meth-card-title">${ce(c.titulo)} — ${ce(c.modulo)}</div>
@@ -3049,9 +3049,9 @@ function renderEduCaseList(){
 
 function selectEduCase(id){
   S.edu.caseId=id;
-  document.querySelectorAll('[id^=case-card-]').forEach(c=>c.classList.remove('selected'));
+  document.querySelectorAll('[id^=case-card-]').forEach(c=>{c.classList.remove('selected');c.setAttribute('aria-checked','false');});
   const card=document.getElementById('case-card-'+id);
-  if(card)card.classList.add('selected');
+  if(card){card.classList.add('selected');card.setAttribute('aria-checked','true');}
 }
 
 function startEduCase(){
@@ -4402,7 +4402,7 @@ function submitPosttest(){
         <div style="display:flex;gap:2rem;margin-bottom:.35rem">
           <div><div style="font-size:.7rem;color:var(--ink3);margin-bottom:.15rem">${L.pretest}</div><div style="font-family:'Instrument Serif',serif;font-size:1.8rem;color:var(--ink)">${preScore}/3</div></div>
           <div><div style="font-size:.7rem;color:var(--ink3);margin-bottom:.15rem">${L.postest}</div><div style="font-family:'Instrument Serif',serif;font-size:1.8rem;color:var(--edu)">${postScore}/3</div></div>
-          <div><div style="font-size:.7rem;color:var(--ink3);margin-bottom:.15rem">${L.gain}</div><div class="quiz-score-num"><span class="prepost-gain ${gainClass}" style="font-size:1.2rem;padding:.25rem .65rem">${gainLabel}</span></div></div>
+          <div><div style="font-size:.7rem;color:var(--ink3);margin-bottom:.15rem">${L.gain}</div><div class="quiz-score-num"><span class="prepost-gain ${gainClass}" style="font-size:1.2rem;padding:.25rem .65rem">${gainLabel}</span></div>${gain<0?`<div style="font-size:.66rem;color:var(--ink3);margin-top:.35rem;max-width:230px;line-height:1.35">${_lang==='es'?'Con solo 3 preguntas, una diferencia de 1 punto no es concluyente.':'With only 3 questions, a 1-point difference isn\'t conclusive.'}</div>`:''}</div>
         </div>
       </div>
     </div>
@@ -5322,12 +5322,12 @@ function drawElastChart(canvasId,levels,shares){
   });
 }
 // ══════════════════════════════════════════════════
-// MOTOR DE IA — GEMINI + FALLBACK AUTOMÁTICO
+// MOTOR DE IA — OPENAI + FALLBACK AUTOMÁTICO
 // ══════════════════════════════════════════════════
-let _geminiKey = '';
+let _openaiKey = '';
 
 function onKeyInput(){
-  const v = document.getElementById('gemini-key').value.trim();
+  const v = document.getElementById('openai-key').value.trim();
   const badge = document.getElementById('api-status-badge');
   if(v.length > 10){
     badge.textContent = 'Key ingresada — guardá para activar';
@@ -5339,10 +5339,10 @@ function onKeyInput(){
 }
 
 function saveKey(){
-  const v = document.getElementById('gemini-key').value.trim();
+  const v = document.getElementById('openai-key').value.trim();
   const badge = document.getElementById('api-status-badge');
   if(!v || v.length < 10){ notify('Ingresá una API key válida.'); return; }
-  _geminiKey = v;
+  _openaiKey = v;
   badge.textContent = '✓ Key guardada para esta sesión — hacé clic en "Probar conexión"';
   badge.className = 'api-status api-empty';
   badge.style.cssText = '';
@@ -5350,10 +5350,10 @@ function saveKey(){
 
 async function testKey(){
   const badge = document.getElementById('api-status-badge');
-  if(!_geminiKey){
-    const v = document.getElementById('gemini-key').value.trim();
+  if(!_openaiKey){
+    const v = document.getElementById('openai-key').value.trim();
     if(!v){ notify('Primero ingresá tu API key y hacé clic en Guardar.'); return; }
-    _geminiKey = v;
+    _openaiKey = v;
   }
   badge.textContent = '⟳ Probando conexión con OpenAI…';
   badge.className = 'api-status api-empty';
@@ -5361,7 +5361,7 @@ async function testKey(){
   try {
     const res = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
-      headers: {'Content-Type':'application/json', 'Authorization':'Bearer '+_geminiKey},
+      headers: {'Content-Type':'application/json', 'Authorization':'Bearer '+_openaiKey},
       body: JSON.stringify({model:'gpt-4o-mini', max_tokens:5, messages:[{role:'user',content:'ok'}]})
     });
     const d = await res.json();
@@ -5384,7 +5384,7 @@ async function testKey(){
 
 // Motor central — OpenAI GPT-4o-mini + fallback automático por reglas
 async function callAI(prompt, fallbackFn) {
-  if(!_geminiKey) return {ok:false, text: fallbackFn()};
+  if(!_openaiKey) return {ok:false, text: fallbackFn()};
 
   const setBadge = (txt, cls='', css='') => {
     const b = document.getElementById('api-status-badge');
@@ -5398,7 +5398,7 @@ async function callAI(prompt, fallbackFn) {
   try {
     const res = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
-      headers: {'Content-Type':'application/json', 'Authorization':'Bearer '+_geminiKey},
+      headers: {'Content-Type':'application/json', 'Authorization':'Bearer '+_openaiKey},
       body: JSON.stringify({
         model: 'gpt-4o-mini',
         max_tokens: 900,
@@ -5433,7 +5433,7 @@ function showAI(elId, result) {
   if(!el) return;
   const tag = result.ok
     ? '<span style="font-family:\'Geist Mono\',monospace;font-size:.58rem;background:#052e16;border:1px solid #166534;color:#4ade80;padding:.12rem .4rem;border-radius:3px;margin-right:.5rem;vertical-align:middle">✦ GPT</span>'
-    : '<span style="font-family:\'Geist Mono\',monospace;font-size:.58rem;background:#1c1917;border:1px solid #3a3530;color:#a09888;padding:.12rem .4rem;border-radius:3px;margin-right:.5rem;vertical-align:middle" title="Análisis generado automáticamente por reglas. Ingresá una API key de Gemini para conclusiones enriquecidas con IA.">⚙ AUTO</span>';
+    : '<span style="font-family:\'Geist Mono\',monospace;font-size:.58rem;background:#1c1917;border:1px solid #3a3530;color:#a09888;padding:.12rem .4rem;border-radius:3px;margin-right:.5rem;vertical-align:middle" title="Análisis generado automáticamente por reglas. Ingresá una API key de OpenAI para conclusiones enriquecidas con IA.">⚙ AUTO</span>';
   el.innerHTML = `<div class="aitxt">${tag}${result.text}</div>`;
 }
 
