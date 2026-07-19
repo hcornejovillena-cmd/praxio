@@ -39,7 +39,25 @@ header{background:var(--ink);padding:1.25rem 2rem;display:flex;align-items:cente
 .modebtn:hover:not(.active) .modebtn-title{color:#c8c0b0;}
 /* API toggle */
 .api-toggle{display:flex;align-items:center;gap:.5rem;font-family:'Geist Mono',monospace;font-size:.68rem;color:#9ca3af;cursor:pointer;}
+/* API bar — colapsada por defecto, función avanzada opcional */
+.api-bar-mini{background:var(--surface);border-bottom:1px solid var(--border);padding:.4rem 1.5rem;}
+.api-mini-toggle{background:none;border:none;font-family:'Geist Mono',monospace;font-size:.64rem;letter-spacing:.03em;color:var(--ink3);cursor:pointer;padding:.2rem 0;}
+.api-mini-toggle:hover{color:var(--ink2);}
 .api-toggle input{accent-color:#2563a8;width:14px;height:14px;cursor:pointer;}
+/* Decisión de marketing → técnica (reposiciona Modo Cálculo: no es una lista de
+   técnicas, es un camino decisión → diseño → análisis → interpretación) */
+.calc-decision-wrap{background:var(--card);border-bottom:1px solid var(--border);padding:1.1rem 1.5rem 1.3rem;}
+.calc-decision-intro{font-size:.86rem;color:var(--ink2);margin-bottom:.85rem;line-height:1.5;}
+.calc-decision-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:.75rem;}
+.calc-decision-card{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:.9rem 1rem;display:flex;align-items:flex-start;gap:.65rem;transition:all .2s;}
+.calc-decision-card.clickable{cursor:pointer;}
+.calc-decision-card.clickable:hover{border-color:var(--ink3);background:var(--card);}
+.calc-decision-icon{font-size:1.15rem;flex-shrink:0;margin-top:.1rem;}
+.calc-decision-title{font-weight:600;font-size:.85rem;color:var(--ink);margin-bottom:.2rem;}
+.calc-decision-desc{font-size:.76rem;color:var(--ink3);line-height:1.4;}
+.calc-decision-subchoice{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.55rem;}
+.calc-decision-subbtn{font-family:'Geist Mono',monospace;font-size:.64rem;padding:.3rem .6rem;background:none;border:1px dashed var(--bdk);border-radius:4px;color:var(--ink2);cursor:pointer;transition:all .2s;}
+.calc-decision-subbtn:hover{border-style:solid;border-color:var(--ink3);color:var(--ink);}
 .mbar{background:var(--surface);border-bottom:1px solid var(--border);display:flex;padding:0 1.5rem;overflow-x:auto;flex-wrap:nowrap;}
 .mbtn{font-family:'Geist',sans-serif;font-size:.8rem;font-weight:500;padding:.85rem 1.1rem;background:none;border:none;border-bottom:2px solid transparent;color:var(--ink3);cursor:pointer;transition:all .2s;white-space:nowrap;flex-shrink:0;}
 .mbtn:hover{color:var(--ink);}
@@ -428,7 +446,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--r);}
   <div class="logo" onclick="goHome()" title="Inicio">
     <h1 class="logo-name" data-i18n="app.title" style="margin:0">Praxio</h1>
     <span class="logo-sub" data-i18n="app.tagline">Kit de Investigación de Mercados</span>
-    <span class="logo-tag">v5.0 · <span data-i18n="app.by">por</span> <a href="https://www.linkedin.com/in/hcornejovillena" target="_blank" rel="noopener" class="author-link">Hugo Cornejo Villena</a></span>
+    <span class="logo-tag">v5.1 · <span data-i18n="app.by">por</span> <a href="https://www.linkedin.com/in/hcornejovillena" target="_blank" rel="noopener" class="author-link">Hugo Cornejo Villena</a></span>
   </div>
   <div style="display:flex;align-items:center;gap:.85rem;">
     <div class="lang-switch">
@@ -450,13 +468,12 @@ input:focus,select:focus,textarea:focus{border-color:var(--r);}
   </button>
 </div>
 
-<!-- API KEY BAR — solo visible en Modo Cálculo, y solo activa si el usuario marca que tiene key -->
-<div class="api-bar hid" id="api-bar-calc">
-  <label class="api-toggle">
-    <input type="checkbox" id="api-toggle-cb" onchange="toggleApiBar()">
-    <span data-i18n="api.toggle">Tengo una API key de OpenAI</span>
-  </label>
-  <div id="api-bar-fields" class="hid" style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;">
+<!-- API KEY BAR — solo visible en Modo Cálculo. Colapsada por defecto: es una función avanzada
+     y opcional (el análisis automático por reglas funciona sin ella), no debe competir en
+     prominencia con el contenido principal. -->
+<div class="api-bar-mini hid" id="api-bar-calc">
+  <button class="api-mini-toggle" onclick="toggleApiBar()" id="api-mini-btn" aria-expanded="false" aria-controls="api-bar-fields" data-i18n="api.advanced.toggle">⚙ IA avanzada (opcional): usar tu propia API key de OpenAI ▾</button>
+  <div id="api-bar-fields" class="api-bar hid">
     <span class="api-label">🤖 <span data-i18n="api.label">IA · OPENAI</span></span>
     <input class="api-input" type="password" id="gemini-key" oninput="onKeyInput()">
     <button class="api-save" onclick="saveKey()" data-i18n="api.save">✓ Guardar key (solo esta sesión)</button>
@@ -464,6 +481,14 @@ input:focus,select:focus,textarea:focus{border-color:var(--r);}
     <span class="api-status api-empty" id="api-status-badge" data-i18n="api.empty">Sin key — se usará análisis automático</span>
     <span class="api-info"><span data-i18n="api.getkey">Obtené tu key en</span> <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com/api-keys</a> · <span data-i18n="api.noserver">No se almacena en ningún servidor</span></span>
   </div>
+</div>
+
+<!-- DECISIÓN DE MARKETING → TÉCNICA — el punto de entrada real a Modo Cálculo.
+     Reusa las mismas categorías que EDU_PROBLEMS (Modo Aprendizaje) para que la
+     app hable siempre en términos de decisión de negocio, no de siglas técnicas. -->
+<div class="calc-decision-wrap hid" id="calc-decision-wrap">
+  <div class="calc-decision-intro" data-i18n="calc.decision.intro">Empezá por la decisión de marketing que necesitás resolver — de ahí te llevamos al diseño del estudio, el análisis y la interpretación. (¿Ya sabés exactamente qué técnica necesitás? Elegila directo abajo.)</div>
+  <div class="calc-decision-grid" id="calc-decision-grid"></div>
 </div>
 
 <!-- NIVEL 2 — SUBNAV MODO CÁLCULO (técnicas) -->
@@ -1388,6 +1413,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--r);}
 // SISTEMA i18n
 // ══════════════════════════════════════════════════
 let _lang='es';
+const APP_VERSION='5.1';
 
 // ══════════════════════════════════════════════════
 // ANALÍTICA DE ACTIVACIÓN (GoatCounter)
@@ -1406,7 +1432,7 @@ es:{
   'app.title':'Praxio','app.tagline':'Kit de Investigación de Mercados','app.by':'por',
   'mode.learn.title':'Modo Aprendizaje','mode.learn.sub':'Casos guiados con evaluación pedagógica',
   'mode.calc.title':'Modo Cálculo','mode.calc.sub':'Herramienta de análisis y resolución técnica',
-  'api.toggle':'Tengo una API key de OpenAI','api.label':'IA · OPENAI','api.save':'✓ Guardar key (solo esta sesión)','api.test':'⚡ Probar conexión',
+  'api.toggle':'Tengo una API key de OpenAI','api.advanced.toggle':'⚙ IA avanzada (opcional): usar tu propia API key de OpenAI ▾','api.label':'IA · OPENAI','api.save':'✓ Guardar key (solo esta sesión)','api.test':'⚡ Probar conexión',
   'api.empty':'Sin key — se usará análisis automático','api.getkey':'Obtené tu key en','api.noserver':'No se almacena en ningún servidor ni en este navegador — se pierde al recargar la página',
   'nav.prev':'Paso anterior','nav.next':'Continuar',
   'wiz.step':'PASO','wiz.0':'El problema','wiz.1':'Caso','wiz.2':'Orientación','wiz.3':'Pretest','wiz.4':'Diagnóstico','wiz.5':'Análisis','wiz.6':'Interpretación','wiz.7':'Evaluación','wiz.8':'Reporte',
@@ -1517,6 +1543,8 @@ es:{
   'calc.mbar.vw.hint':'4 preguntas de precio psicológico: rango de precio aceptable, sin estimar aún demanda ni ingresos.',
   'calc.mbar.nms.hint':'Como Van Westendorp, pero además estima demanda e ingresos con 2 preguntas adicionales de intención de compra.',
   'calc.mbar.turf.hint':'Qué combinación de productos o variantes alcanza a la mayor cantidad de consumidores distintos, sin duplicar cobertura.',
+  'calc.decision.intro':'Empezá por la decisión de marketing que necesitás resolver — de ahí te llevamos al diseño del estudio, el análisis y la interpretación. (¿Ya sabés exactamente qué técnica necesitás? Elegila directo abajo.)',
+  'calc.decision.vw.only':'Solo rango de precio (Van Westendorp)','calc.decision.vw.plusdemand':'+ demanda e ingresos (VW + NMS)',
   'calc.dropzone.click':'Arrastrá el Excel o hacé clic',
   'calc.note.demo':'¿Sin datos? Usá los datos de <strong>demostración</strong>.',
   'calc.err.minrows':'respuestas válidas. Se necesitan al menos',
@@ -1831,7 +1859,7 @@ en:{
   'app.title':'Praxio','app.tagline':'Market Research Toolkit','app.by':'by',
   'mode.learn.title':'Learning Mode','mode.learn.sub':'Guided cases with pedagogical assessment',
   'mode.calc.title':'Calculation Mode','mode.calc.sub':'Analysis and technical resolution tool',
-  'api.toggle':'I have an OpenAI API key','api.label':'AI · OPENAI','api.save':'✓ Save key (this session only)','api.test':'⚡ Test connection',
+  'api.toggle':'I have an OpenAI API key','api.advanced.toggle':'⚙ Advanced AI (optional): use your own OpenAI API key ▾','api.label':'AI · OPENAI','api.save':'✓ Save key (this session only)','api.test':'⚡ Test connection',
   'api.empty':'No key — automatic analysis will be used','api.getkey':'Get your key at','api.noserver':'Not stored on any server or in this browser — lost on page reload',
   'nav.prev':'Previous step','nav.next':'Continue',
   'wiz.step':'STEP','wiz.0':'The problem','wiz.1':'Case','wiz.2':'Orientation','wiz.3':'Pretest','wiz.4':'Diagnosis','wiz.5':'Analysis','wiz.6':'Interpretation','wiz.7':'Evaluation','wiz.8':'Report',
@@ -1938,6 +1966,8 @@ en:{
   'calc.mbar.vw.hint':'4 psychological pricing questions: the acceptable price range, without yet estimating demand or revenue.',
   'calc.mbar.nms.hint':'Like Van Westendorp, but also estimates demand and revenue with 2 additional purchase-intent questions.',
   'calc.mbar.turf.hint':'Which combination of products or variants reaches the most distinct consumers, without duplicating coverage.',
+  'calc.decision.intro':'Start from the marketing decision you need to solve — from there we take you to study design, analysis, and interpretation. (Already know exactly which technique you need? Pick it directly below.)',
+  'calc.decision.vw.only':'Price range only (Van Westendorp)','calc.decision.vw.plusdemand':'+ demand and revenue (VW + NMS)',
   'calc.dropzone.click':'Drag the Excel file or click',
   'calc.note.demo':'No data? Use <strong>demo</strong> data.',
   'calc.err.minrows':'valid responses. At least',
@@ -2295,6 +2325,7 @@ function setLang(lang){
   // generado por JS (no cubierto por los atributos data-i18n estáticos)
   if(S.c.res){renderCRes();if(S.c.priceAttr)renderElast();}
   if(S.m.res){renderMRes();}
+  renderCalcDecisions();
 }
 
 function initI18n(){
@@ -4555,7 +4586,7 @@ th{background:#f5f2eb;padding:.5rem .75rem;border:1px solid #e2ddd4;text-align:l
 .footer{margin-top:3rem;padding-top:1rem;border-top:1px solid #e2ddd4;font-size:.75rem;color:#8a8278;text-align:center;}
 @media print{body{margin:20px;}.no-print{display:none;}}</style></head>
 <body>
-<div style="display:flex;align-items:baseline;gap:1rem;margin-bottom:.25rem"><h1>${L.reportTitle}</h1><span style="font-size:.8rem;color:#8a8278;font-family:monospace">${t('app.title')} v5.0</span></div>
+<div style="display:flex;align-items:baseline;gap:1rem;margin-bottom:.25rem"><h1>${L.reportTitle}</h1><span style="font-size:.8rem;color:#8a8278;font-family:monospace">${t('app.title')} v${APP_VERSION}</span></div>
 <div class="meta">${L.generated} ${fecha} · ${L.author}: Hugo Cornejo Villena, USMP</div>
 <div class="badge">${S.edu.sessionCode}</div>
 <h2>${L.sec1}</h2>
@@ -4578,7 +4609,7 @@ ${S.edu.aiFeedback?`<h2>${L.sec5ai}</h2><div class="resp-block" style="border-co
 ${S.edu.survey.abierta1?`<div class="resp-block" style="margin-top:.5rem"><div class="resp-key">${L.valuable}</div>${S.edu.survey.abierta1}</div>`:''}
 ${S.edu.survey.abierta2?`<div class="resp-block"><div class="resp-key">${L.improve}</div>${S.edu.survey.abierta2}</div>`:''}
 ${S.edu.survey.abierta3?`<div class="resp-block"><div class="resp-key">${L.apply}</div>${S.edu.survey.abierta3}</div>`:''}
-<div class="footer">${t('app.title')} v5.0 · Hugo Cornejo Villena · Universidad de San Martín de Porres, Perú · ${methodRef}<br>${L.footerNote}</div>
+<div class="footer">${t('app.title')} v${APP_VERSION} · Hugo Cornejo Villena · Universidad de San Martín de Porres, Perú · ${methodRef}<br>${L.footerNote}</div>
 </body></html>`;
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([html],{type:'text/html'}));
@@ -4737,6 +4768,7 @@ function setAppMode(mode){
   _appMode=mode;
   document.getElementById('modebtn-edu').classList.toggle('active',mode==='edu');
   document.getElementById('modebtn-calc').classList.toggle('active',mode==='calc');
+  document.getElementById('calc-decision-wrap').classList.toggle('hid',mode!=='calc');
   document.getElementById('mbar-calc').classList.toggle('hid',mode!=='calc');
   document.getElementById('api-bar-calc').classList.toggle('hid',mode!=='calc');
   document.querySelectorAll('.mod').forEach(p=>p.classList.remove('act'));
@@ -4757,10 +4789,47 @@ function goHome(){
 }
 
 function toggleApiBar(){
-  const cb=document.getElementById('api-toggle-cb');
-  document.getElementById('api-bar-fields').classList.toggle('hid',!cb.checked);
+  const fields=document.getElementById('api-bar-fields');
+  fields.classList.toggle('hid');
+  document.getElementById('api-mini-btn').setAttribute('aria-expanded',String(!fields.classList.contains('hid')));
 }
 
+// Mapeo decisión de negocio (EDU_PROBLEMS) → técnica(s) de Modo Cálculo.
+// 'precio' mapea a 2 técnicas distintas (VW puro vs. VW+NMS), así que ofrece
+// una sub-elección en vez de saltar directo a un módulo.
+const CALC_DECISION_ENGINES={precio:['vw','nms'],atributos:['maxdiff'],diseno:['conjoint'],portafolio:['turf']};
+function renderCalcDecisions(){
+  const grid=document.getElementById('calc-decision-grid');
+  if(!grid)return;
+  grid.innerHTML=Object.values(EDU_PROBLEMS).filter(p=>p.active&&CALC_DECISION_ENGINES[p.id]).map(p=>{
+    const engines=CALC_DECISION_ENGINES[p.id];
+    const title=p.title[_lang]||p.title.es,desc=p.cardDesc[_lang]||p.cardDesc.es;
+    if(engines.length>1){
+      return `<div class="calc-decision-card">
+        <div class="calc-decision-icon">${p.icon}</div>
+        <div>
+          <div class="calc-decision-title">${title}</div>
+          <div class="calc-decision-desc">${desc}</div>
+          <div class="calc-decision-subchoice">
+            <button class="calc-decision-subbtn" onclick="goToCalcModule('vw')">${t('calc.decision.vw.only')}</button>
+            <button class="calc-decision-subbtn" onclick="goToCalcModule('nms')">${t('calc.decision.vw.plusdemand')}</button>
+          </div>
+        </div>
+      </div>`;
+    }
+    return `<div class="calc-decision-card clickable" onclick="goToCalcModule('${engines[0]}')">
+      <div class="calc-decision-icon">${p.icon}</div>
+      <div>
+        <div class="calc-decision-title">${title}</div>
+        <div class="calc-decision-desc">${desc}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function goToCalcModule(engine){
+  document.getElementById('tab-'+engine)?.click();
+  document.getElementById('mbar-calc')?.scrollIntoView({behavior:'smooth',block:'start'});
+}
 function swMod(m,btn,cls){
   track('modulo_entrado',{modulo:m,modo:'calculo'});
   document.querySelectorAll('.mod').forEach(p=>p.classList.remove('act'));
@@ -5454,7 +5523,7 @@ function buildCScript(){
   const sc=
 `# ══════════════════════════════════════════════════════════════
 # CBC CONJOINT — Script completo
-# Praxio — Kit de Investigación de Mercados v5.0
+# Praxio — Kit de Investigación de Mercados v${APP_VERSION}
 # Autor: Hugo Cornejo Villena
 # Modelo: Logit Multinomial (Choice-Based Conjoint)
 # ══════════════════════════════════════════════════════════════
@@ -5816,7 +5885,7 @@ function buildMScript(){
   const sc=
 `# ══════════════════════════════════════════════════════════════
 # MAXDIFF (Best-Worst Scaling) — Script completo
-# Praxio — Kit de Investigación de Mercados v5.0
+# Praxio — Kit de Investigación de Mercados v${APP_VERSION}
 # Autor: Hugo Cornejo Villena
 # Métodos: conteo directo + logit multinomial + puntajes individuales
 # ══════════════════════════════════════════════════════════════
@@ -7395,7 +7464,7 @@ async function runShapley(){
 // ══════════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════════
-window.addEventListener('load',()=>{loadCEx();loadMEx();initI18n();renderProblemList();});
+window.addEventListener('load',()=>{loadCEx();loadMEx();initI18n();renderProblemList();renderCalcDecisions();});
 window.addEventListener('resize',()=>{if(S.vw.res)drawVWChart('vw-canvas',S.vw.res,S.vw.res);if(S.nms.res){drawVWChart('nms-vw-canvas',S.nms.res,S.nms.res);drawNMSChart();}if(S.c.res&&S.c.priceAttr)renderElast();});
 </script>
 </body>
