@@ -235,6 +235,15 @@ Tres reglas de simulación seleccionables vía nuevas pills `#sim-rule-pills` (n
 
 `calcShare(profiles)` es ahora un dispatcher: `agg` → `calcShareAgg`; cualquier otra regla → `calcShareHet`. `setSimRule(rule,el)` actualiza `S.c.simRule`, la nota metodológica visible, y recalcula (`updateSim()`, `renderElast()`).
 
+**F. 4 de los 5 "minor observations" de la crítica (4.6.B) resueltos**
+
+Mismo día, después de publicar. Solo queda pendiente `transition:width` (ver sección 11).
+
+- **Badge "↓ Retrocedió" ablandado**: cuando `gain<0` en `submitPosttest()`, se agrega una nota debajo del badge ("Con solo 3 preguntas, una diferencia de 1 punto no es concluyente"). El color rojo se conservó; solo se contextualizó.
+- **Botones de exportación distinguidos**: `calc.cbc.btn.exportind` y `calc.md.btn.exportind` (los de datos por respondiente) ahora llevan el prefijo 👤, en vez de compartir el mismo `↓` que los agregados.
+- **`role="radio"` + `aria-checked`** en las tarjetas `.meth-card` de problema y caso (Modo Aprendizaje), con `role="radiogroup"` en sus contenedores (`#edu-problem-list`, `#edu-case-list`). `selectEduCase()` actualiza `aria-checked` al mismo tiempo que `.selected`. El retrofit de accesibilidad (línea ~4740, `if(!el.hasAttribute('role'))...`) respeta el `role` explícito y no lo pisa.
+- **Renombrado `_geminiKey`→`_openaiKey`, `id="gemini-key"`→`id="openai-key"`**, incluyendo un tooltip que decía textualmente "Ingresá una API key de Gemini" (factualmente incorrecto — la integración es OpenAI). Verificado con grep que no queda ningún rastro de "gemini" en el archivo.
+
 ---
 
 ## 5. Estado de la i18n del Modo Cálculo
@@ -520,12 +529,7 @@ La i18n del Modo Cálculo sigue **completa** (los 5 módulos). El simulador hete
 
 1. **Mapa de Posicionamiento (Análisis de Correspondencias)** — ver 7.1, sigue siendo el módulo nuevo de mayor prioridad; nada de esta sesión lo tocó.
 2. **Aplicar Empirical Bayes shrinkage también al script R exportable** (`buildMScript`, `buildCScript`) — hoy los scripts R usan `mlogit`/conteo simple sin ningún smoothing; sería consistente ofrecer también ahí una versión con `bayesm` o `ChoiceModelR` (HB real) como alternativa avanzada.
-3. **Minor observations de la crítica de diseño (4.6.B) todavía sin resolver**, de mayor a menor impacto:
-   - `role="radio"`/`aria-selected` en `.meth-card` (problema/caso en Modo Aprendizaje) — hoy usa `role="button"` genérico vía el retrofit de accesibilidad, y un lector de pantalla no anuncia el cambio de selección entre tarjetas.
-   - Ablandar el badge rojo "↓ Retrocedió" del postest — un delta de 1 punto sobre un quiz de 3 preguntas es estadísticamente ruidoso pero se presenta con la misma contundencia visual que un resultado concluyente.
-   - Distinguir visualmente los botones de exportación agregada vs. individual (mismo estilo `.btn` hoy, fácil clic equivocado).
-   - Limpiar el naming leftover `_geminiKey`/`id="gemini-key"` (la integración real ya es OpenAI, no Gemini).
-   - Los 6 `transition:width` (CBC/VW/NMS bar fills) deberían migrar a `transform` para evitar jank.
+3. **Único minor observation de la crítica de diseño (4.6.B) que sigue pendiente**: los 6 `transition:width` (CBC/VW/NMS bar fills) deberían migrar a `transform` para evitar jank. Es el más laborioso de los 5 encontrados — el texto (%) va *dentro* del mismo elemento que se anima, así que animar por `transform:scaleX()` en vez de `width` requiere primero separar la etiqueta de texto de la barra que se escala, en las ~4 funciones de render afectadas (CBC, MaxDiff, TURF/Shapley). Los otros 4 (badge "Retrocedió" sin matiz, botones de export sin distinguir, `role="radio"` faltante, naming `_geminiKey`) se corrigieron en la sesión del 19 de julio, ver 4.6.F.
 4. **Configurar un servidor MCP de navegador** (Playwright/Puppeteer/chrome-devtools) si se quiere una crítica de diseño con evidencia visual real — esta sesión y la anterior corrieron ambas con la limitación declarada de "sin navegador disponible", basadas en lectura de código fuente únicamente.
 
 ### Módulo más valioso para agregar primero (nuevo módulo, no mejora de existente)
