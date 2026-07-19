@@ -1,0 +1,12 @@
+# R session artifacts
+.RData
+.Rhistory
+.Rproj.user/
+
+# Backups / snapshots
+*.bak
+AI-assisted Learning Environment for Applied Market Research/
+
+# Local tooling (not part of the published project)
+.claude/
+.impeccable/
