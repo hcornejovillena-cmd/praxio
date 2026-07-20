@@ -14,7 +14,7 @@ Dos roles con el mismo peso: **profesores** universitarios que enseñan investig
 
 ## Product Purpose
 
-Praxio es una plataforma educativa de investigación cuantitativa de mercados (bilingüe ES/EN, single-file, sin backend) con dos modos: Modo Cálculo (herramienta técnica libre sobre CBC Conjoint, MaxDiff, Van Westendorp, NMS y TURF) y Modo Aprendizaje (casos pedagógicos guiados con pretest, diagnóstico, análisis, interpretación y reporte). El éxito se mide en dos horizontes que se alimentan entre sí: que los estudiantes aprendan e interpreten correctamente cada técnica, y que eso impulse la adopción por más profesores y universidades de la región.
+Praxio es una plataforma educativa de investigación cuantitativa de mercados (bilingüe ES/EN, single-file, sin backend) con dos modos: Modo Cálculo (herramienta técnica libre sobre CBC Conjoint, MaxDiff, Van Westendorp, NMS, TURF y Mapa de Posicionamiento/Análisis de Correspondencias) y Modo Aprendizaje (casos pedagógicos guiados con pretest, diagnóstico, análisis, interpretación y reporte). El éxito se mide en dos horizontes que se alimentan entre sí: que los estudiantes aprendan e interpreten correctamente cada técnica, y que eso impulse la adopción por más profesores y universidades de la región.
 
 ## Positioning
 
@@ -31,7 +31,7 @@ Software estadístico clásico (SPSS, Sawtooth Lighthouse Studio): evitar su est
 ## Design Principles
 
 - **Rigor sin intimidar**: profesional y confiable, pero nunca tan denso como el software estadístico clásico que es su anti-referencia.
-- **Mismo estándar que las herramientas pagadas, sin excusas por ser gratis**: metodología citada (papers de Orme, Sawtooth Software), WCAG AA, i18n completo en los 5 módulos — gratis no es sinónimo de menor cuidado.
+- **Mismo estándar que las herramientas pagadas, sin excusas por ser gratis**: metodología citada (papers de Orme, Sawtooth Software; Greenacre y Le Roux & Rouanet para Análisis de Correspondencias), WCAG AA, i18n completo en los 6 módulos — gratis no es sinónimo de menor cuidado.
 - **Sirve a dos roles a la vez**: cada pantalla debe funcionar tanto para el profesor que evalúa si adoptarla como para el estudiante que la resuelve sin ayuda.
 - **Enseña haciendo, no explicando**: el Modo Aprendizaje prioriza que el estudiante ejecute el caso real (datos reales, instrumento real) antes de leerlo en abstracto.
 

@@ -1,6 +1,22 @@
 # Registro de cambios — Praxio (ex "Kit de Investigación de Mercados")
 
-Archivo afectado: `kit_investigacion_mercados_v5.html`
+## Sesión v6.0 — 20 de julio de 2026
+
+Archivo afectado: `kit_investigacion_mercados_v6.html` (más `index.html`, `README.md`, `PRODUCT.md`).
+Alcance: bump de versión, analítica de activación y exportación a Excel para el módulo de Mapa de Posicionamiento (Análisis de Correspondencias), agregado en sesiones anteriores. **No se modificó la lógica del algoritmo de CA** (parser, Jacobi, residuos, puntos suplementarios).
+
+- **Versión**: `APP_VERSION` y el header estático pasan de v5.1 a **v6.0**. Verificado que no queda ningún rastro de `v5.1`/`v5.0` en el HTML.
+- **Analítica (GoatCounter)**: el módulo de Posicionamiento no disparaba `wizard_completado` ni `export_realizado`, a diferencia de los otros 5 módulos del kit. Agregado en `runCorrAnalysisCalc()`, en la rama de Posicionamiento de `runEduAnalysis()`, y en `dlCorrCSV()`.
+- **Exportación a Excel** (`expCorr()`, nueva función): workbook de 4 hojas — Coordenadas (marcas/atributos, activos y suplementarios), Residuos estandarizados (matriz completa), Inercia por dimensión (scree plot en números), Conclusiones (texto de IA/fallback). Sin script R — decisión explícita, ver `HANDOFF_Kit_v6_Estado_y_Roadmap.md` (D22): solo 2 de los 6 módulos del kit tienen script R, y replicarlo aquí hubiera exigido reimplementar el parser de 3 formatos de entrada en otro lenguaje.
+- **i18n**: ~15 claves nuevas `calc.corr.exp.*` (ES/EN), reutilizando `calc.btn.excel` y `calc.ai.title` donde ya existían.
+- **Validación**: sintaxis de los bloques `<script>`, balance de `<div>` (1093/1093), y una prueba funcional aislada en Node con datos simulados confirmando el contenido exacto de las 4 hojas. Prueba manual en navegador real hecha por el usuario por fuera de esta conversación, sin incidencias.
+- **Documentación**: `README.md`, `index.html`, `PRODUCT.md` y el HANDOFF actualizados para reflejar v6.0 como versión activa y el módulo de Posicionamiento como parte del producto.
+- **Pendiente**: `git commit`/`push` de todo lo anterior — no se hizo como parte de esta sesión.
+
+---
+
+## Sesión de rebranding — archivo `kit_investigacion_mercados_v5.html`
+
 Alcance: rebranding + mejoras de UI/UX. **No se modificó ninguna lógica de cálculo/análisis** (CBC Conjoint, MaxDiff, Van Westendorp, NMS, TURF, Shapley).
 
 ---
