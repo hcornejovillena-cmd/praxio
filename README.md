@@ -25,9 +25,9 @@ Profesores universitarios que enseñan investigación cuantitativa de mercados y
 
 ## Uso
 
-Abrir directamente `kit_investigacion_mercados_v6.1.html` en un navegador (local o vía la demo en vivo). No requiere instalación, servidor ni build.
+Abrir directamente `index.html` en un navegador (local o vía la demo en vivo). No requiere instalación, servidor ni build. La URL de la demo en vivo es fija y siempre sirve la última versión — no cambia entre releases.
 
-`kit_investigacion_mercados_v6.html` (v6.0), `kit_investigacion_mercados_v5.1.html` (v5.1) y `kit_investigacion_mercados_v5.html` (v5.0) se conservan en el repo como referencia histórica.
+Los archivos `kit_investigacion_mercados_v*.html` (incluido `v6.1.html`, idéntico al `index.html` actual) se conservan en el repo como snapshots de cada versión publicada, no como el punto de entrada.
 
 ## Documentación del proyecto
 
