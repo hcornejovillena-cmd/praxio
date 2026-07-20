@@ -25,15 +25,16 @@ Profesores universitarios que enseñan investigación cuantitativa de mercados y
 
 ## Uso
 
-Abrir directamente `kit_investigacion_mercados_v6.html` en un navegador (local o vía la demo en vivo). No requiere instalación, servidor ni build.
+Abrir directamente `kit_investigacion_mercados_v6.1.html` en un navegador (local o vía la demo en vivo). No requiere instalación, servidor ni build.
 
-`kit_investigacion_mercados_v5.1.html` (v5.1) y `kit_investigacion_mercados_v5.html` (v5.0) se conservan en el repo como referencia histórica.
+`kit_investigacion_mercados_v6.html` (v6.0), `kit_investigacion_mercados_v5.1.html` (v5.1) y `kit_investigacion_mercados_v5.html` (v5.0) se conservan en el repo como referencia histórica.
 
 ## Documentación del proyecto
 
 - `PRODUCT.md` — contexto de producto: usuarios, propósito, principios de diseño.
 - `HANDOFF_Kit_v6_Estado_y_Roadmap.md` — estado técnico, arquitectura, roadmap.
 - `CAMBIOS.md` — registro de cambios.
+- `CHANGELOG_Corr_v6.1.md` — ajustes al módulo de Análisis de Correspondencias en v6.1.
 
 ## Licencia
 
@@ -41,4 +42,4 @@ MIT — ver [LICENSE](LICENSE). Se agradece atribución si lo adaptas para tu cu
 
 ---
 
-v6.0 · por Hugo Cornejo Villena
+v6.1 · por Hugo Cornejo Villena
