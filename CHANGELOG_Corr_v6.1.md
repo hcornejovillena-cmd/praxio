@@ -80,7 +80,17 @@ El usuario cuestionó por qué los atributos también pueden quedar como "suplem
 
 
 
-## Nota de validación del usuario
+## Fix 7 — Números de atributo casi invisibles dentro de los cuadrados
+
+**Síntoma (reportado tras validar el Fix 6):** con el canvas ya proporcionado correctamente, se notó que los números dentro de los cuadrados de atributo (1, 2, 3...) casi no se distinguían.
+
+**Causa raíz:** el número se dibujaba en blanco **dentro** del cuadrado, y tanto el cuadrado como el número compartían la misma opacidad reducida por `cos²` (calidad de representación) — en atributos con `cos²` bajo (opacidad mínima 0.35), el conjunto quedaba muy tenue y el contraste blanco-sobre-gris-tenue se volvía casi ilegible, agravado en cuadrados pequeños (tamaño proporcional a la masa del atributo).
+
+**Fix:** replicando el tratamiento que ya usan las marcas (nombre en negro sólido junto al círculo, a opacidad plena, independientemente del `cos²` del punto): el cuadrado se sigue dibujando atenuado por `cos²` (esa información sigue siendo válida y visible), pero el número ahora se dibuja **afuera** del cuadrado, en negro sólido (`#1a1714`) y a opacidad plena — igual que el nombre de marca.
+
+**Ubicación:** bloque de dibujo de atributos en `drawCorrespondenceMap` (~línea 5720-5734 del HTML). Sin cambios en `corrPlaceLabels` (colocación/anticolisión de etiquetas) ni en el algoritmo de CA.
+
+
 
 La primera captura de "gráfico pequeño / apiñado" (enviada justo después del Fix 4) correspondía a una prueba hecha con la versión **anterior** a estas correcciones (v6, no v6.1) — no reveló un bug nuevo.
 

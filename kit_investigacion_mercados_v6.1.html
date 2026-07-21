@@ -5728,9 +5728,14 @@ function drawCorrespondenceMap(canvasId,res,opts){
     ctx.fillStyle=attrColor;ctx.strokeStyle=attrColor;ctx.lineWidth=1;
     if(p.supplementary)ctx.setLineDash([3,3]);else ctx.setLineDash([]);
     ctx.fillRect(p.labelX-s/2,p.labelY-s/2,s,s);ctx.strokeRect(p.labelX-s/2,p.labelY-s/2,s,s);ctx.setLineDash([]);
-    ctx.fillStyle='#fff';ctx.font='bold 11px Geist Mono, monospace';ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText(String(p.num),p.labelX,p.labelY);ctx.textBaseline='alphabetic';
+    // El número va AFUERA del cuadrado, en negro sólido y opacidad plena — igual que el
+    // nombre de marca junto al círculo — para que siga siendo legible aunque el cuadrado
+    // esté atenuado por un cos² bajo (antes el número iba en blanco DENTRO del cuadrado,
+    // con la misma opacidad reducida que el propio cuadrado, quedando casi invisible).
     ctx.globalAlpha=1;
+    ctx.fillStyle='#1a1714';ctx.font='bold 11px Geist Mono, monospace';ctx.textAlign='left';ctx.textBaseline='middle';
+    ctx.fillText(String(p.num),p.labelX+s/2+4,p.labelY);
+    ctx.textBaseline='alphabetic';
   });
   placed.filter(p=>p.kind==='brand').forEach(p=>{
     const r=5+(p.mass||0)*20;
