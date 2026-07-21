@@ -5656,11 +5656,6 @@ function drawCorrespondenceMap(canvasId,res,opts){
   const showSupp=opts.showSupplementary!==false;
   const canvas=document.getElementById(canvasId);if(!canvas)return;
   const ctx=canvas.getContext('2d');
-  // Escala con el ancho real del contenedor (antes tope fijo en 560px, que desperdiciaba
-  // espacio disponible en pantallas anchas); tope alto de 960px para mantener el mapa legible.
-  const side=Math.min(canvas.parentElement?.offsetWidth||560,960)||560;
-  canvas.width=side;canvas.height=side;
-  const W=side,H=side,pad=56,cx=W/2,cy=H/2;
   const attrColor='#57534e';
   const activeBrands=res.coordsBrands||[], activeAttrs=res.coordsAttrs||[];
   const suppBrands=showSupp?(res.suppBrands||[]):[], suppAttrs=showSupp?(res.suppAttrs||[]):[];
@@ -5675,8 +5670,23 @@ function drawCorrespondenceMap(canvasId,res,opts){
   const minY=Math.min(0,...allY), maxY=Math.max(0,...allY);
   const mX=(maxX-minX)*0.15||0.1, mY=(maxY-minY)*0.15||0.1;
   const rangeX=(maxX-minX+2*mX)||1, rangeY=(maxY-minY+2*mY)||1;
-  const avail=Math.min(W,H)-pad*2;
-  const scale=Math.min(avail/rangeX, avail/rangeY); // misma escala en ambos ejes, sin distorsión
+  const pad=56;
+  // Escala con el ancho real del contenedor (antes tope fijo en 560px, que desperdiciaba
+  // espacio disponible en pantallas anchas); tope alto de 960px para mantener el mapa legible.
+  const W=Math.min(canvas.parentElement?.offsetWidth||560,960)||560;
+  // Alto proporcional a la relación real rangeY/rangeX de los datos — antes el canvas era
+  // siempre cuadrado (W===H), lo que en datasets con inercia muy concentrada en un eje
+  // (ej. Dim1=91.6%/Dim2=8.4%) dejaba la mitad del canvas en blanco arriba/abajo, con todos
+  // los puntos comprimidos en una banda horizontal delgada. Se calcula el alto que haría
+  // que los datos ocupen el mismo % del área disponible en ambos ejes (sin distorsionar la
+  // escala, que sigue siendo idéntica en X e Y), con un piso/techo para no llegar a formas
+  // extremas (una franja inservible o una torre angosta) en casos límite.
+  const idealH=pad*2+(rangeY/rangeX)*(W-2*pad);
+  const H=Math.max(Math.min(idealH,W*1.2),Math.max(320,W*0.35));
+  canvas.width=W;canvas.height=H;
+  const cx=W/2,cy=H/2;
+  const availX=W-2*pad, availY=H-2*pad;
+  const scale=Math.min(availX/rangeX, availY/rangeY); // misma escala en ambos ejes, sin distorsión
   const dataCx=(minX+maxX)/2, dataCy=(minY+maxY)/2;
   const px=v=>cx+(v-dataCx)*scale, py=v=>cy-(v-dataCy)*scale;
   const maxAbs=Math.max(rangeX,rangeY)/2; // referencia de magnitud, ya no determina directamente la grilla

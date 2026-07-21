@@ -66,9 +66,25 @@ El usuario cuestionó por qué los atributos también pueden quedar como "suplem
 
 ---
 
+## Fix 6 — El canvas cuadrado dejaba la mitad del mapa en blanco con inercia muy asimétrica
+
+**Síntoma (reportado tras validar el Fix 4 en producción):** con el canvas ya escalando correctamente al ancho del contenedor (confirmado en consola: `canvas.width=960`, `parentElement.offsetWidth=960`), el mapa seguía viéndose "apiñado" con mucho espacio en blanco arriba y abajo, en un dataset con Dimensión 1 = 91.6% de inercia y Dimensión 2 = 8.4%.
+
+**Causa raíz:** el canvas se forzaba a ser siempre **cuadrado** (`canvas.width=canvas.height=side`). Al mantener la misma escala en ambos ejes (correcto, para no distorsionar el mapa), un dataset donde el rango real de la Dimensión 2 es mucho menor que el de la Dimensión 1 termina graficado en una banda horizontal delgada dentro de un cuadrado — con la mayor parte del cuadrado vacía arriba y abajo. Esto no era un bug de "tamaño insuficiente" (el Fix 4 sí funcionaba), sino de **forma** fija e inadecuada para la proporción real de los datos.
+
+**Fix:** el alto del canvas ahora se calcula en función de la proporción real `rangeY/rangeX` de los datos (mismo ancho disponible del contenedor, tope 960px), de modo que los puntos ocupen un porcentaje similar del área disponible en ambos ejes — sin tocar la escala (que sigue siendo idéntica en X e Y, preservando la representación fiel del mapa). Se aplican un piso (`max(320, 0.35×ancho)`) y un techo (`1.2×ancho`) para evitar formas extremas (una franja inservible o una torre angosta) en casos límite.
+
+**Ubicación:** `drawCorrespondenceMap`, recálculo de `W`/`H` (~línea 5654-5680 del HTML). Sin cambios en la lógica de escala, ejes, ni en el algoritmo de CA.
+
+**Validado con fórmula aislada** contra el caso reportado (inercia ~91.6%/8.4%): pasa de un cuadrado 960×960 (con ~65% de área en blanco) a un rectángulo 960×336 que aprovecha el espacio real. Casos balanceados (inercia repartida entre ambas dimensiones) no cambian de comportamiento (siguen dando un cuadrado).
+
+
+
 ## Nota de validación del usuario
 
-La captura de "gráfico pequeño / apiñado" enviada después del Fix 4 correspondía a una prueba hecha con la versión **anterior** a estas correcciones (v6, no v6.1) — no reveló un bug nuevo. Queda pendiente que el usuario valide el tamaño del mapa con el archivo v6.1 ya corregido.
+La primera captura de "gráfico pequeño / apiñado" (enviada justo después del Fix 4) correspondía a una prueba hecha con la versión **anterior** a estas correcciones (v6, no v6.1) — no reveló un bug nuevo.
+
+Una segunda captura, ya sobre v6.1 publicada, mostró el mismo síntoma visual. Se verificó en la consola del navegador del usuario (`canvas.width=960`, `parentElement.offsetWidth=960`, `max-width=960px`) que el Fix 4 sí estaba funcionando correctamente — el canvas medía el ancho real del contenedor sin problema. El síntoma remanente era otra causa distinta: la forma cuadrada forzada del canvas, no apta para datasets con inercia muy asimétrica entre dimensiones. Esto se resolvió en el **Fix 6**.
 
 
 - Los 3 parsers corregidos se probaron de forma aislada (extraídos y ejecutados en Node) contra los 3 archivos reales aportados por el usuario (`ACorr_Forms.xlsx`, `ACorr_TablaConting.xlsx`, `ACorr_P_P.xlsx`).
