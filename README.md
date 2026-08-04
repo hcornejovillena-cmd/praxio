@@ -27,14 +27,13 @@ Profesores universitarios que enseñan investigación cuantitativa de mercados y
 
 Abrir directamente `index.html` en un navegador (local o vía la demo en vivo). No requiere instalación, servidor ni build. La URL de la demo en vivo es fija y siempre sirve la última versión — no cambia entre releases.
 
-Los archivos `kit_investigacion_mercados_v*.html` (incluido `v6.1.html`, idéntico al `index.html` actual) se conservan en el repo como snapshots de cada versión publicada, no como el punto de entrada.
+Los archivos `kit_investigacion_mercados_v*.html` (incluido `v6.2.html`, idéntico al `index.html` actual) se conservan en el repo como snapshots de cada versión publicada, no como el punto de entrada.
 
 ## Documentación del proyecto
 
 - `PRODUCT.md` — contexto de producto: usuarios, propósito, principios de diseño.
-- `HANDOFF_Kit_v6_Estado_y_Roadmap.md` — estado técnico, arquitectura, roadmap.
+- `HANDOFF_Kit_v6.2_Estado_y_Roadmap.md` — estado técnico, arquitectura, roadmap (documento único y vigente).
 - `CAMBIOS.md` — registro de cambios.
-- `CHANGELOG_Corr_v6.1.md` — ajustes al módulo de Análisis de Correspondencias en v6.1.
 
 ## Licencia
 
@@ -42,4 +41,4 @@ MIT — ver [LICENSE](LICENSE). Se agradece atribución si lo adaptas para tu cu
 
 ---
 
-v6.1 · por Hugo Cornejo Villena
+v6.2 · por Hugo Cornejo Villena

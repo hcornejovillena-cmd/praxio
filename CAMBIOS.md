@@ -1,5 +1,37 @@
 # Registro de cambios — Praxio (ex "Kit de Investigación de Mercados")
 
+## Sesión v6.2 — 27 de julio de 2026
+
+Archivo afectado: `kit_investigacion_mercados_v6.2.html` (más `index.html`, `README.md`).
+Alcance: versión centrada en el **rigor estadístico** de los seis motores. No agrega módulos nuevos; reescribe dos motores, audita y corrige los cuatro restantes, y alinea los scripts R exportables con el kit. Detalle completo en `HANDOFF_Kit_v6.2_Estado_y_Roadmap.md`, sección 0.
+
+**Cambios de fondo**
+
+- **CBC**: motor reescrito — MNL estimado por Newton-Raphson + utilidades individuales como modo de la posterior (MAP), con μ y τ² por Empirical Bayes vía EM. Sustituye el análisis por conteos y el suavizado heurístico.
+- **MaxDiff**: motor reescrito — logit secuencial best-worst estimado + MAP individual, reutilizando el núcleo numérico de CBC. Puntajes con reescalado exponencial estándar.
+- **Scripts R**: pasan a ser implementaciones de referencia que reproducen el kit exactamente, en R base (solo dependen de `readxl`). Validados ejecutando en R los scripts que genera el propio HTML.
+- **Posicionamiento, TURF, Van Westendorp, NMS**: auditados y corregidos. El núcleo estadístico de los cuatro era correcto; los defectos estaban en escalas, umbrales y límites.
+
+**Correcciones con efecto visible en los resultados**
+
+- TURF ponderado: el reach ya no reescala a cada encuestado por su propio rango; umbral por defecto sube de 0.30 a 0.50.
+- NMS: el paso de la curva de demanda ya no se fuerza a entero (una gaseosa de S/1.5–6 pasa de 5 a 57 puntos de curva).
+- Posicionamiento: el umbral de "atributo no diferenciador" se corrige de `1/n` a `2/n`.
+- Shapley general (TURF): barajado corregido a Fisher-Yates (el anterior tenía 144σ de desviación respecto de la uniforme) y reparto proporcional en vez de restar el mínimo.
+- MaxDiff: los puntajes usan ahora el reescalado exponencial estándar, con interpretación probabilística — los números difieren de corridas previas.
+
+**Transparencia y diagnóstico**
+
+- NMS: calibración de intención de compra visible, con tres presets (conservadora/moderada/optimista) y lectura automática de sensibilidad.
+- Van Westendorp y NMS: intervalos de confianza al 95% por bootstrap sobre los cuatro puntos de precio y el precio óptimo.
+- NMS: ya no descarta encuestados en silencio; los reporta desglosados por causa.
+- CBC y MaxDiff: diagnósticos en escala estándar de la industria (RLH con referencia de azar) y hoja "Ajuste del modelo" en el Excel exportado.
+- Posicionamiento: correcciones sobre los tres formatos de entrada y el mapa (columna "NONE", tamaño y proporción del canvas, legibilidad de etiquetas) — integra y reemplaza el contenido de `CHANGELOG_Corr_v6.1.md`, retirado de la raíz del repo.
+
+**Documentación**: `README.md`, `index.html` y este registro actualizados para reflejar v6.2 como versión activa. `HANDOFF_Kit_v6.2_Estado_y_Roadmap.md` reemplaza a `HANDOFF_Kit_v6_Estado_y_Roadmap.md` como documento único y vigente.
+
+---
+
 ## Sesión v6.0 — 20 de julio de 2026
 
 Archivo afectado: `kit_investigacion_mercados_v6.html` (más `index.html`, `README.md`, `PRODUCT.md`).
