@@ -54,8 +54,8 @@ Dos modos: **Modo Cálculo** (herramienta técnica, ahora con entrada orientada 
 
 **Publicado en GitHub**:
 - Repo: https://github.com/hcornejovillena-cmd/praxio
-- Live (GitHub Pages): https://hcornejovillena-cmd.github.io/praxio/ → `index.html` redirige a `kit_investigacion_mercados_v6.2.html`. **Commit y push de v6.2 ya realizados** — el sitio en vivo sirve la versión actual. Pendiente menor: confirmar que no queden archivos sin trackear (`git status` limpio) y actualizar `CAMBIOS.md` si no se hizo en el mismo commit.
-- Releases: `v5.0` y `v5.1` (tags + GitHub Releases con notas). **v6.2 aún no tiene tag ni release en GitHub** — el código está publicado y en vivo, pero falta crear el tag/release formal si se quiere versionar igual que las anteriores.
+- Live (GitHub Pages): https://hcornejovillena-cmd.github.io/praxio/ → `index.html` ya redirige localmente a `kit_investigacion_mercados_v6.2.html`, **pero v6.0 todavía no tiene commit ni push** — `git status` muestra `kit_investigacion_mercados_v6.2.html` y este HANDOFF como untracked, y `PRODUCT.md`/`README.md`/`index.html` como modificados sin commitear. El sitio en vivo sigue sirviendo v5.1 hasta que se commitee y pushee.
+- Releases: `v5.0` y `v5.1` (tags + GitHub Releases con notas). **v6.0 aún no tiene tag ni release** — pendiente para cuando se decida publicar.
 - Licencia: MIT (`LICENSE`)
 - `PRODUCT.md` en la raíz documenta register/usuarios/positioning/anti-referencias (generado vía `/impeccable init`)
 
@@ -344,7 +344,7 @@ Botón `↓ Excel resultados` agregado en el paso 4 del wizard de Posicionamient
 
 **D. Documentación sincronizada**: `README.md` (lista de 6 módulos, nota sobre Excel/CSV sin R en Posicionamiento, referencias de archivo activo/histórico, versión del footer), `index.html` (redirect a `kit_investigacion_mercados_v6.2.html`), `PRODUCT.md` (Posicionamiento agregado a la descripción de producto, conteo de módulos con i18n completo actualizado a 6, referencias bibliográficas de CA agregadas), este HANDOFF (secciones 1, 5, 6, 7.1, 8, 10, 11), y una nueva entrada en `CAMBIOS.md` (ver ese archivo).
 
-**Resuelto**: `git commit` + `push` de todo lo anterior ya se realizó (ver sección 1) — el sitio en vivo refleja esta versión.
+**Pendiente real, no bloqueante**: `git commit` + `push` de todo lo anterior — al cierre de esta sesión seguía sin hacerse (ver sección 1).
 
 ---
 
@@ -986,7 +986,7 @@ function renderEduDiag() {
 | `README.md` | Descripción pública del repo + link a la demo en vivo | Media |
 | `LICENSE` | MIT | Baja |
 | `CAMBIOS.md` | Registro de cambios (rebranding a Praxio, accesibilidad WCAG AA, sesión v6.0) | Media |
-| `index.html` | Redirect a `kit_investigacion_mercados_v6.2.html` (actualizado en 4.8); ya commiteado y pusheado, la raíz de GitHub Pages funciona correctamente | Baja |
+| `index.html` | Redirect a `kit_investigacion_mercados_v6.2.html` (actualizado en 4.8), para que la raíz de GitHub Pages funcione una vez se haga push | Baja |
 | `.impeccable/critique/*.md` | Snapshot de la crítica de diseño de la sesión del 19 de julio (score 29/40) | Media — backlog para la próxima pasada de polish |
 | `.gitignore` | Excluye artefactos de R (`.RData`, `.Rhistory`), `.claude/`, `.impeccable/`, y el prototipo R/Shiny superado (`Ejecutable.R`, `R/analysis.R`, `.Rproj`) | — |
 
@@ -1010,7 +1010,7 @@ La i18n del Modo Cálculo sigue **completa** (los 6 módulos, incluido Posiciona
 
 1. **Prueba manual en navegador de los motores reescritos (bloqueante antes de publicar).** Las validaciones de 4.9.D se hicieron sobre el núcleo numérico ejecutado en Node, no sobre el wizard completo. Verificar: (a) que los resultados de MaxDiff rendericen bien con la **nueva escala exponencial** de puntajes —los números difieren de corridas previas, ver D30—; (b) que los Excel exportados abran sin problemas, incluida la hoja nueva "Ajuste del modelo" y las columnas RLH; (c) que el **simulador de CBC** y las elasticidades se comporten con las utilidades nuevas; (d) tiempos reales de cómputo en el navegador del usuario con un estudio de tamaño realista.
 2. **Mapa de Posicionamiento** — **cerrado**, con las correcciones de 4.9.A validadas contra archivos reales del usuario en los tres formatos de entrada. Sin script R, por decisión explícita (D22), no por pendiente.
-3. ~~Commit + push de v6.1/v6.2~~ — **resuelto.** El sitio en vivo ya refleja la versión publicada. Pendiente menor: crear tag/release formal en GitHub para v6.2 (ver sección 1), si se quiere mantener el mismo esquema de versionado que v5.0/v5.1.
+3. **Commit + push de v6.1** y actualización de `CAMBIOS.md`. El sitio en vivo puede estar desfasado — confirmar antes (ver la guarda de arriba).
 4. ~~Actualizar los scripts R exportables~~ — **resuelto en 4.9.G / D31.** Ambos scripts son ahora implementaciones de referencia validadas contra el motor JS. Pendiente menor: probar el script generado sobre un Excel real exportado por el kit (la validación se hizo con CSV, porque el entorno no tenía `readxl`), y confirmar que los nombres de columna del diseño (`TAREA`, `OPCIÓN`, `TARJETA`, `Item_1..K`) coinciden exactamente con los que produce la exportación.
 5. **Registro citable (Zenodo + `CITATION.cff`).** El usuario planteó obtener un DOI. Ruta acordada: integración GitHub↔Zenodo, que asigna un DOI de concepto (fijo, para citar el proyecto) y uno por release (para reproducibilidad). Requiere `LICENSE` explícito (ya existe, MIT) y `CITATION.cff` con autoría y afiliación (USMP), idealmente con ORCID. Sobre publicación arbitrada: **JOSS restringió en enero de 2026 el alcance para aplicaciones web** (exige librería central reusable o alto rigor de diseño tipo MVC/framework, más 6 meses de historial público y declaración de uso de IA generativa); **JOSE está cerrada** a nuevos envíos mientras su comité delibera. El núcleo numérico compartido de 4.9.D acerca al criterio de "librería central" de JOSS. Ruta paralela más realista a corto plazo: paper metodológico/pedagógico en una revista de educación en marketing, citando el software archivado en Zenodo.
 4. **Único minor observation de la crítica de diseño (4.6.B) que sigue pendiente**: los 6 `transition:width` (CBC/VW/NMS bar fills) deberían migrar a `transform` para evitar jank. Es el más laborioso de los 5 encontrados — el texto (%) va *dentro* del mismo elemento que se anima, así que animar por `transform:scaleX()` en vez de `width` requiere primero separar la etiqueta de texto de la barra que se escala, en las ~4 funciones de render afectadas (CBC, MaxDiff, TURF/Shapley). Los otros 4 (badge "Retrocedió" sin matiz, botones de export sin distinguir, `role="radio"` faltante, naming `_geminiKey`) se corrigieron en la sesión del 19 de julio, ver 4.6.F.
